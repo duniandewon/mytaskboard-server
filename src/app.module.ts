@@ -1,12 +1,31 @@
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { BoardsModule } from './boards/boards.module';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
-  imports: [BoardsModule, DatabaseModule],
+  imports: [
+    BoardsModule,
+    DatabaseModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 3600000,
+        limit: 1000,
+      },
+    ]),
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
