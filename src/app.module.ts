@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 
 import { BoardsModule } from './boards/boards.module';
 import { DatabaseModule } from './database/database.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DatabaseModule } from './database/database.module';
         limit: 1000,
       },
     ]),
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [
