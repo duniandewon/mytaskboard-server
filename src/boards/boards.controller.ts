@@ -7,14 +7,19 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { BoardsService } from './boards.service';
 
-import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
+import { Prisma } from '@prisma/client';
+
+import { BoardsService } from './boards.service';
 
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
+
+  @Post()
+  create(@Body() board: Prisma.BoardCreateInput) {
+    return this.boardsService.create(board);
+  }
 
   @Get()
   findAll() {
@@ -23,21 +28,16 @@ export class BoardsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(id);
-  }
-
-  @Post()
-  create(@Body() board: CreateBoardDto) {
-    return this.boardsService.create(board);
+    return this.boardsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() board: UpdateBoardDto) {
-    return this.boardsService.update(id, board);
+  update(@Param('id') id: string, @Body() board: Prisma.BoardUpdateInput) {
+    return this.boardsService.update(+id, board);
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
-    return this.boardsService.delete(id);
+    return this.boardsService.delete(+id);
   }
 }

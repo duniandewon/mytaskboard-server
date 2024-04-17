@@ -1,52 +1,38 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateBoardDto } from './dto/update-board.dto';
-import { CreateBoardDto } from './dto/create-board.dto';
+import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class BoardsService {
-  private boards = [
-    {
-      id: 'board-1',
-      name: 'My Task Board',
-      desctiption: 'Task to keep organized',
-    },
-  ];
+  constructor(private readonly databaseService: DatabaseService) {}
 
-  findAll() {
-    return this.boards;
-  }
-
-  findOne(id: string) {
-    const board = this.boards.find((board) => board.id === id);
-
-    if (!board) throw new NotFoundException('Board Not Found');
-
-    return board;
-  }
-
-  create(board: CreateBoardDto) {
-    this.boards.push({ id: '1', ...board });
-
-    return board;
-  }
-
-  update(id: string, updatedBoard: UpdateBoardDto) {
-    this.boards = this.boards.map((board) => {
-      if (board.id === id) {
-        return { ...board, ...updatedBoard };
-      }
-
-      return board;
+  async create(createBoardDto: Prisma.BoardCreateInput) {
+    return this.databaseService.board.create({
+      data: createBoardDto,
     });
-
-    return this.findOne(id);
   }
 
-  delete(id: string) {
-    const removedBoard = this.findOne(id);
+  async findAll() {
+    return this.databaseService.board.findMany();
+  }
 
-    this.boards = this.boards.filter((board) => board.id !== id);
+  findOne(id: number) {
+    return this.databaseService.board.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 
-    return removedBoard;
+  update(id: number, updateBoardDto: Prisma.BoardUpdateInput) {
+    return this.databaseService.board.update({
+      where: { id },
+      data: updateBoardDto,
+    });
+  }
+
+  delete(id: number) {
+    return this.databaseService.board.delete({ where: { id } });
   }
 }
