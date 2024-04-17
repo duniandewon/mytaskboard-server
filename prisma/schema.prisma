@@ -19,18 +19,18 @@ model Board {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  tasks        Task[]
+  tasks       Task[]
 }
 
 model Task {
   id          Int        @id @default(autoincrement())
   title       String
   description String?
-  status      TaskStatus
+  status      TaskStatus @default(TO_DO)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   Board       Board?     @relation(fields: [boardId], references: [id])
-  boardId     Int?
+  boardId     Int
 }
 
 enum TaskStatus {
